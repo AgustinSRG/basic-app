@@ -1,6 +1,6 @@
 ---
 applications:
-- name: basic-app-pastebin
+- name: basic-app
   memory: 256M
   instances: 1
   host: rest-service
