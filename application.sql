@@ -22,7 +22,7 @@ CREATE TABLE `user` (
 CREATE TABLE `session` (
     `token` varchar(255) NOT NULL PRIMARY KEY,
     `user` varchar(255) NOT NULL,
-    `expiration` bigint NOT NULL
+    `expires` bigint NOT NULL
 );
 
 CREATE TABLE `text_file` (
