@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import messages.TextFileMessage;
 import messages.TextFileMinMessage;
 import models.TextFile;
 import models.User;
+import utils.IdentificationUtils;
 
 @RestController
 public class TextFileController extends GeneralController {
@@ -117,12 +119,89 @@ public class TextFileController extends GeneralController {
 	}
 	
 	@PostMapping("/files/create")
-	public TextFileMessage createFile(@RequestBody Map<String,Object> body) {
-		return null;
+	public TextFileMessage createFile(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
+		String title = null;
+		String content = null;
+		
+		try {
+			title = body.get("title").toString();
+			content = body.get("content").toString();
+		} catch (Exception ex) {}
+		
+		if (content == null) {
+			content = "";
+		}
+		
+		if (title == null || title.length() < 1 || title.length() > 160) {
+			return new TextFileMessage("BAD_REQUEST");
+		}
+		
+		User user = this.findUserBySessionCookie(sessionCookie);
+		
+		if (user == null) {
+			return new TextFileMessage("NO_ACCOUNT");
+		}
+		
+		String id = IdentificationUtils.getRandomId();
+		
+		TextFile file = new TextFile(id);
+		
+		file.setUser(user.getID());
+		file.setCreationDate(new Date());
+		file.setLastEditDate(new Date());
+		file.setTitle(title);
+		file.setContent(content);
+		
+		try {
+			file.save();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return new TextFileMessage("DATABASE_ERROR");
+		}
+		
+		return new TextFileMessage(file, user);
 	}
 	
 	@PostMapping("/files/edit")
-	public ActionResultResponse editFile(@RequestBody Map<String,Object> body) {
-		return null;
+	public ActionResultResponse editFile(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
+		String title = null;
+		String content = null;
+		String id = null;
+		
+		try {
+			id = body.get("id").toString();
+			title = body.get("title").toString();
+			content = body.get("content").toString();
+		} catch (Exception ex) {}
+		
+		if (content == null) {
+			content = "";
+		}
+		
+		if (id == null || title == null || title.length() < 1 || title.length() > 160) {
+			return new ActionResultResponse(false, "BAD_REQUEST");
+		}
+		
+		TextFile f = server.find(TextFile.class).where().eq("identifier", id).findOne();
+		if (f == null) {
+			return new ActionResultResponse(false, "NOT_FOUND");
+		}
+		
+		User user = this.findUserBySessionCookie(sessionCookie);
+		
+		if (user == null) {
+			return new ActionResultResponse(false, "NO_ACCOUNT");
+		}
+		
+		if (!f.getUser().equals(user.getID())) {
+			return new ActionResultResponse(false, "ACCESS_DENIED");
+		}
+		
+		f.setTitle(title);
+		f.setContent(content);
+		
+		f.save();
+		
+		return new ActionResultResponse(true, "OK");
 	}
 }
