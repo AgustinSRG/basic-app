@@ -29,7 +29,7 @@ public class GeneralController {
 			return null;
 		}
 		
-		if (s.getExpires().getTime() < System.currentTimeMillis()) {
+		if (s.getExpires().getTime() > 0 && s.getExpires().getTime() < System.currentTimeMillis()) {
 			s.delete();
 			return null;
 		}

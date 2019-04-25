@@ -1,10 +1,12 @@
 package controllers;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +21,16 @@ import utils.PasswordUtils;
 public class UserController extends GeneralController {
 	
 	@PostMapping("/register")
-	public RegisterResponse register(@RequestParam("name") String name, @RequestParam("password") String password) {
+	public RegisterResponse register(@RequestBody Map<String,Object> body) {
+		
+		String name = null;
+		String password = null;
+		
+		try {
+			name = body.get("name").toString();
+			password = body.get("password").toString();
+		} catch (Exception ex) {}
+		
 		if (name == null || password == null || name.length() < 1 || password.length() < 1 || name.length() > 80) {
 			return new RegisterResponse(false, "BAD_REQUEST", null, null);
 		}
@@ -46,7 +57,17 @@ public class UserController extends GeneralController {
 	}
 	
 	@PostMapping("/password/change")
-	public ActionResultResponse changePassword(@RequestParam("user") String uuid, @RequestParam("password") String password, @RequestParam("newPassword") String newPassword) {
+	public ActionResultResponse changePassword(@RequestBody Map<String,Object> body) {
+		String uuid = null;
+		String password = null;
+		String newPassword = null;
+		
+		try {
+			uuid = body.get("user").toString();
+			password = body.get("password").toString();
+			newPassword = body.get("new_password").toString();
+		} catch (Exception ex) {}
+		
 		if (uuid == null || password == null || newPassword == null) {
 			return new ActionResultResponse(false, "BAD_REQUEST");
 		}
