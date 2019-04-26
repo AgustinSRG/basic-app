@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,15 +61,8 @@ public class CommentController extends GeneralController {
 		return msg;
 	}
 	
-	@PostMapping("/comments/post")
-	public CommentPostMessage postComment(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
-		String fileId = null;
-		String text = "";
-		
-		try {
-			fileId = body.get("file").toString();
-			text = body.get("content").toString();
-		} catch (Exception ex) {}
+	@RequestMapping(value = "/comments/post", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public CommentPostMessage postComment(@RequestParam(value = "file", defaultValue = "") String fileId, @RequestParam(value = "content", defaultValue = "") String text, @CookieValue("session") String sessionCookie) {
 		
 		if (fileId == null || text == null || text.length() < 1 || text.length() > 300) {
 			return new CommentPostMessage("BAD_REQUEST");

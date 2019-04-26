@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -118,16 +121,8 @@ public class TextFileController extends GeneralController {
 		return new TextFileMessage(f, user);
 	}
 	
-	@PostMapping("/files/create")
-	public TextFileMessage createFile(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
-		String title = null;
-		String content = null;
-		
-		try {
-			title = body.get("title").toString();
-			content = body.get("content").toString();
-		} catch (Exception ex) {}
-		
+	@RequestMapping(value = "/files/create", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public TextFileMessage createFile(@RequestParam(value = "title", defaultValue = "") String title, @RequestParam(value = "content", defaultValue = "") String content, @CookieValue("session") String sessionCookie) {
 		if (content == null) {
 			content = "";
 		}
@@ -162,18 +157,8 @@ public class TextFileController extends GeneralController {
 		return new TextFileMessage(file, user);
 	}
 	
-	@PostMapping("/files/edit")
-	public ActionResultResponse editFile(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
-		String title = null;
-		String content = null;
-		String id = null;
-		
-		try {
-			id = body.get("id").toString();
-			title = body.get("title").toString();
-			content = body.get("content").toString();
-		} catch (Exception ex) {}
-		
+	@RequestMapping(value = "/files/edit", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ActionResultResponse editFile(@RequestParam(value = "id", defaultValue = "") String id, @RequestParam(value = "title", defaultValue = "") String title, @RequestParam(value = "content", defaultValue = "") String content, @CookieValue("session") String sessionCookie) {
 		if (content == null) {
 			content = "";
 		}

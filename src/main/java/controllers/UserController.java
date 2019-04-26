@@ -3,8 +3,12 @@ package controllers;
 import java.util.Date;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import messages.ActionResultResponse;
@@ -16,16 +20,8 @@ import utils.PasswordUtils;
 @RestController
 public class UserController extends GeneralController {
 	
-	@PostMapping("/register")
-	public RegisterResponse register(@RequestBody Map<String,Object> body) {
-		
-		String name = null;
-		String password = null;
-		
-		try {
-			name = body.get("name").toString();
-			password = body.get("password").toString();
-		} catch (Exception ex) {}
+	@RequestMapping(value = "/register", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public RegisterResponse register(@RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "password", defaultValue = "") String password) {
 		
 		if (name == null || password == null || name.length() < 1 || password.length() < 1 || name.length() > 80) {
 			return new RegisterResponse(false, "BAD_REQUEST", null, null);
@@ -52,7 +48,7 @@ public class UserController extends GeneralController {
 		return new RegisterResponse(true, "OK", user.getID(), user.getName());
 	}
 	
-	@PostMapping("/password/change")
+	@RequestMapping(value = "/password/change", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ActionResultResponse changePassword(@RequestBody Map<String,Object> body) {
 		String uuid = null;
 		String password = null;

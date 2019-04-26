@@ -24,6 +24,7 @@
 <script type="text/javascript" src="/js/lib/vue.js"></script>
 
 <!-- Scripts (App) -->
+<script type="text/javascript" src="/js/modals.js"></script>
 <script type="text/javascript" src="/js/main.js"></script>
 </head>
 <body>
@@ -39,15 +40,15 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbarCollapse">
 					<ul class="navbar-nav mr-auto">
-						<li class="nav-item active"><a class="nav-link" href="#">Home
-								<span class="sr-only">(current)</span>
-						</a></li>
-						<li class="nav-item"><a class="nav-link" href="#">Mis textos</a></li>
-						<li class="nav-item form-inline margin-l"><button class="btn btn-sm btn-outline-primary"><i class="fas fa-plus"></i> Nuevo Texto</button></li>
+						<li v-bind:class="{active: section === 'home'}" class="nav-item"><a class="nav-link" href="javascript:;" v-on:click="goHome">Inicio</a></li>
+						<li v-bind:class="{'d-none': !isUser}" class="nav-item"><a class="nav-link" href="javascript:;" v-on:click="goMyTextFiles">Mis textos</a></li>
+						<li v-bind:class="{'d-none': !isUser}" class="nav-item form-inline margin-l"><button class="btn btn-sm btn-outline-primary" v-on:click="goCreateTextFile"><i class="fas fa-plus"></i> Nuevo Texto</button></li>
 					</ul>
 					<div class="form-inline mt-2 mt-md-0">
-						<div class="inline magin-r white-text"><i class="fas fa-user"></i> <span class="username">Usuario</span></div>
-						<button class="btn btn-sm btn-outline-primary my-2 my-sm-0" type="submit"><i class="fas fa-sign-out-alt"></i> Salir</button>
+						<div v-bind:class="{'d-none': !isUser}" class="inline magin-r white-text"><i class="fas fa-user"></i> <span class="username" v-text="userName"></span></div>
+						<button v-bind:class="{'d-none': !isUser}" v-on:click="showLogout" class="btn btn-sm btn-outline-primary my-2 my-sm-0 margin-l" type="button"><i class="fas fa-sign-out-alt"></i> Salir</button>
+						<button v-bind:class="{'d-none': isUser}" v-on:click="showLogin" class="btn btn-sm btn-outline-primary my-2 my-sm-0 margin-l" type="button"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+						<button v-bind:class="{'d-none': isUser}" v-on:click="showSignup" class="btn btn-sm btn-outline-primary my-2 my-sm-0 margin-l" type="button"><i class="fas fa-user-plus"></i> Registrarse</button>
 					</div>
 				</div>
 			</nav>
@@ -55,20 +56,7 @@
 
 		<!-- Begin page content -->
 		<main role="main" class="container main-container">
-			<h1 class="mt-5">Sticky footer with fixed navbar</h1>
-			<p class="lead">
-				Pin a fixed-height footer to the bottom of the viewport in desktop
-				browsers with this custom HTML and CSS. A fixed navbar has been added
-				with
-				<code>padding-top: 60px;</code>
-				on the
-				<code>body &gt; .container</code>
-				.
-			</p>
-			<p>
-				Back to <a href="../sticky-footer">the default sticky footer</a>
-				minus the navbar.
-			</p>
+			TODO
 		</main>
 
 		<footer class="footer">
@@ -76,6 +64,10 @@
 				<span class="text-muted">Agustín San Román Guzmán. Trabajo para Modelado Avanzado de Sistemas de Información, Máster en Ingeniería Informática. 2018-2019.</span>
 			</div>
 		</footer>
+		
+		<login-modal ref="loginModal" id="modal-login" v-on:login="login"></login-modal>
+		<logout-modal ref="logoutModal" id="modal-logout" v-on:logout="logout"></logout-modal>
+		<signup-modal ref="signupModal" id="modal-signup" v-on:signup="signup"></signup-modal>
 	</div>
 </body>
 </html>

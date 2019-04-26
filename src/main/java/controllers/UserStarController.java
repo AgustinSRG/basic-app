@@ -2,10 +2,13 @@ package controllers;
 
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,15 +33,9 @@ public class UserStarController extends GeneralController {
 		}
 	}
 	
-	@PostMapping("/star/set")
-	public UserStarMessage setStar(@RequestBody Map<String,Object> body, @CookieValue("session") String sessionCookie) {
-		String fileId = null;
-		boolean star = false;
-		
-		try {
-			fileId = body.get("file").toString();
-			star = body.get("star").toString().equalsIgnoreCase("yes");
-		} catch (Exception ex) {}
+	@RequestMapping(value = "/star/set", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public UserStarMessage setStar(@RequestParam(value = "file", defaultValue = "") String fileId, @RequestParam(value = "star", defaultValue = "") String starStr, @CookieValue("session") String sessionCookie) {
+		boolean star = starStr.equalsIgnoreCase("yes");
 		
 		TextFile f = server.find(TextFile.class).where().eq("identifier", fileId).findOne();
 		if (f == null) {

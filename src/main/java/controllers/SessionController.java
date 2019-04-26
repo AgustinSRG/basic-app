@@ -3,8 +3,14 @@ package controllers;
 import java.util.Date;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import messages.ActionResultResponse;
@@ -17,17 +23,9 @@ import utils.PasswordUtils;
 @RestController
 public class SessionController extends GeneralController {
 	
-	@PostMapping("/login")
-	public LoginResponse login(@RequestBody Map<String,Object> body) {
-		String name = null;
-		String password = null;
-		boolean expires = true;
-		
-		try {
-			name = body.get("name").toString();
-			password = body.get("password").toString();
-			expires = body.get("expiration").toString().equalsIgnoreCase("yes");
-		} catch (Exception ex) {}
+	@RequestMapping(value = "/login", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public LoginResponse login(@RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "password", defaultValue = "") String password, @RequestParam(value = "expiration", defaultValue = "") String expireStr) {
+		boolean expires = expireStr.equalsIgnoreCase("yes");
 		
 		if (name == null || password == null || name.length() < 1 || password.length() < 1 || name.length() > 80) {
 			return new LoginResponse(false, "BAD_REQUEST", null, null, null);
@@ -50,6 +48,8 @@ public class SessionController extends GeneralController {
 			
 			Session s = new Session(sessionId);
 			
+			s.setUser(user.getID());
+			
 			if (expires) {
 				s.setExpires(new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000)));
 			} else {
@@ -62,6 +62,7 @@ public class SessionController extends GeneralController {
 				s.save();
 				user.save();
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				return new LoginResponse(false, "DATABASE_ERROR", null, null, null);
 			}
 			
@@ -71,14 +72,23 @@ public class SessionController extends GeneralController {
 		}
 	}
 	
-	@PostMapping("/logout")
-	public ActionResultResponse logout(@RequestBody Map<String,Object> body) {
-		String token = null;
+	@GetMapping("/session")
+	public LoginResponse session(@CookieValue("session") String sessionCookie) {
+		if (sessionCookie == null) {
+			return new LoginResponse(false, "NO_SESSION", null, null, null);
+		}
 		
-		try {
-			token = body.get("token").toString();
-		} catch (Exception ex) {}
+		User user = this.findUserBySessionCookie(sessionCookie);
 		
+		if (user == null) {
+			return new LoginResponse(false, "SESSION_EXPIRED", null, null, null);
+		}
+		
+		return new LoginResponse(true, "SESSION_ACTIVE", user.getID(), user.getName(), sessionCookie);
+	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ActionResultResponse logout(@RequestParam(value = "token", defaultValue = "") String token) {
 		if (token == null) {
 			return new ActionResultResponse(false, "BAD_REQUEST");
 		}

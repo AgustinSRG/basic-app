@@ -54,3 +54,12 @@ code {
 	padding-top: 1rem;
 }
 
+.error-modal {
+	color: red;
+	display:block;
+}
+
+.error-label {
+	color:red;
+}
+

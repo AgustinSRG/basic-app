@@ -134,4 +134,162 @@ $(document).on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open'
 $(document).ready(function () {
     // Your init code here
     
+	// Register components
+	vue_loadModalComponents();
+	
+	// VUE main app
+	
+	window.App = new Vue({
+		el: '#vapp',
+        data: {
+        	userId: "",
+        	userName: "",
+        	isUser: false,
+        	section: "home",
+        	selectedFile: "",
+        	sessionToken: "",
+        },
+        methods: {
+        	goHome: function () {
+        		this.section = "home";
+        	},
+        	goMyTextFiles: function () {
+        		this.section = "my-files";
+        	},
+        	goCreateTextFile: function () {
+        		this.section = "create";
+        	},
+        	goTextFile: function (file) {
+        		this.section = "file";
+        		this.selectedFile = file;
+        	},
+        	showLogin: function () {
+        		this.$refs.loginModal.show();
+        	},
+        	login: function() {
+        		var username = this.$refs.loginModal.username;
+        		var pw1 = this.$refs.loginModal.password;
+        		
+        		if (!username) {
+        			this.$refs.loginModal.setError("Debe especificar un nombre de usuario.");
+        			return;
+        		}
+        		
+        		if (username.length > 80) {
+        			this.$refs.loginModal.setError("El nombre de usuario no debe ser mayor que 80 caracteres.");
+        			return;
+        		}
+        		
+        		PendingRequests.pending("login", $.post("/login", {name: username, password: pw1, expiration: "no"}, function (response) {
+					if (response.success) {
+						this.isUser = true;
+            			this.userId = response.userId;
+            			this.userName = response.userName;
+            			this.sessionToken = response.token;
+					} else {
+						switch (response.errorCode) {
+							case "USER_NOT_FOUND":
+							case "INVALID_PASSWORD":
+								this.$refs.loginModal.setError("Nombre de usuario o contraseña incorrectos.");
+								break;
+							default:
+								this.$refs.loginModal.setError("Nombre de usuario o contraseña incorrectos.");
+						}
+					}
+				}.bind(this)).fail(function () {
+					this.$refs.loginModal.setError("No se pudo iniciar sesión. Compruebe que dispone de conexión a internet.");
+				}.bind(this)));
+        	},
+        	showSignup: function () {
+        		this.$refs.signupModal.show();
+        	},
+        	signup: function () {
+        		var username = this.$refs.signupModal.username;
+        		var pw1 = this.$refs.signupModal.password;
+        		var pw2 = this.$refs.signupModal.passwordRepeat;
+        		
+        		if (!username) {
+        			this.$refs.signupModal.setError("Debe especificar un nombre de usuario.");
+        			return;
+        		}
+        		
+        		if (username.length > 80) {
+        			this.$refs.signupModal.setError("El nombre de usuario no debe ser mayor que 80 caracteres.");
+        			return;
+        		}
+        		
+        		if (!pw1) {
+        			this.$refs.signupModal.setError("Debe especificar una contraseña para su cuenta.");
+        			return;
+        		}
+        		
+        		if (pw1 !== pw2) {
+        			this.$refs.signupModal.setError("Debe introducir la misma contraseña 2 veces.");
+        			return;
+        		}
+        		
+        		PendingRequests.pending("register", $.post("/register", {name: username, password: pw1}, function (response) {
+        			if (response.success) {
+        				this.$refs.signupModal.hide()
+        				PendingRequests.pending("login", $.post("/login", {name: username, password: pw1, expiration: "no"}, function (response) {
+        					if (response.success) {
+        						this.isUser = true;
+                    			this.userId = response.userId;
+                    			this.userName = response.userName;
+                    			this.sessionToken = response.token;
+        					}
+        				}.bind(this)));
+        			} else {
+        				this.$refs.signupModal.setError("Ya existe un usuario con el nombre escogido.");
+        			}
+        		}.bind(this)).fail(function () {
+        			this.$refs.signupModal.setError("No se pudo llevar a cabo el registro. Compruebe que dispone de conexión a internet.");
+        		}.bind(this)));
+        	},
+        	showLogout: function () {
+        		this.$refs.logoutModal.show();
+        	},
+        	logout: function () {
+        		var token = this.sessionToken;
+        		this.$refs.logoutModal.hide();
+        		setCookie("session", "");
+        		this.isUser = false;
+    			this.userId = "";
+    			this.userName = "";
+    			this.sessionToken = "";
+    			this.goHome();
+    			if (token) {
+    				PendingRequests.pending("logout", $.post("/logout", {token: token}, function () {
+    					return;
+    				}));
+    			}
+        	},
+        	checkSession: function () {
+        		if (this.sessionToken) {
+        			PendingRequests.pending("session-check", $.get("/session", function (response) {
+        				if (response.success) {
+        					this.isUser = true;
+                			this.userId = response.userId;
+                			this.userName = response.userName;
+        				} else {
+        					this.isUser = false;
+                			this.userId = "";
+                			this.userName = "";
+        				}
+        			}.bind(this)));
+        		} else {
+        			this.isUser = false;
+        			this.userId = "";
+        			this.userName = "";
+        		}
+        	},
+        	init: function () {
+        		this.sessionToken = getCookie("session") || "";
+        		setInterval(this.checkSession.bind(this), 30000);
+        		this.checkSession();
+        	},
+        }
+	});
+	
+	App.init();
 });
