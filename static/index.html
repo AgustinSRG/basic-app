@@ -1,32 +1,82 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
-	<head>
-		<title>Aplicación básica</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="author" content="Agustín San Román Guzmán">
-		
-		<!-- Styles --> 
-		<link rel="stylesheet" media="screen" href="/css/lib/bootstrap.css">
-		<link rel="stylesheet" media="screen" href="/css/lib/bootstrap-theme.css">
-		<link rel="stylesheet" media="screen" href="/font-awesome/css/all.css">
-		<link rel="stylesheet" media="screen" href="/css/main.css">
-		
-		<!-- Scripts (Libs) -->
-		<script type="text/javascript" src="/js/lib/jquery-3.3.1.min.js"></script>
-		<script type="text/javascript" src="/js/lib/popper.min.js"></script>
-		<script type="text/javascript" src="/js/lib/moment.min.js"></script>
-		<script type="text/javascript" src="/js/lib/bootstrap.js"></script>
-		<script type="text/javascript" src="/js/lib/material.min.js"></script>
-		<script type="text/javascript" src="/js/lib/lodash.min.js"></script>
-		<script type="text/javascript" src="/js/lib/vue.js""></script>
-		
-		<!-- Scripts (App) -->
-		<script type="text/javascript" src="/js/main.js"></script>
-	</head>
-	<body>
-		<div id="vapp">
-			
-		</div>
-	</body>
+<head>
+<title>Aplicación básica</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+<meta name="author" content="Agustín San Román Guzmán">
+<meta charset="utf-8">
+
+<!-- Styles -->
+<link rel="stylesheet" media="screen" href="/css/lib/bootstrap.css">
+<link rel="stylesheet" media="screen"
+	href="/css/lib/bootstrap-theme.css">
+<link rel="stylesheet" media="screen" href="/font-awesome/css/all.css">
+<link rel="stylesheet" media="screen" href="/css/main.css">
+
+<!-- Scripts (Libs) -->
+<script type="text/javascript" src="/js/lib/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/lib/popper.min.js"></script>
+<script type="text/javascript" src="/js/lib/moment.min.js"></script>
+<script type="text/javascript" src="/js/lib/bootstrap.js"></script>
+<script type="text/javascript" src="/js/lib/material.min.js"></script>
+<script type="text/javascript" src="/js/lib/lodash.min.js"></script>
+<script type="text/javascript" src="/js/lib/vue.js"></script>
+
+<!-- Scripts (App) -->
+<script type="text/javascript" src="/js/main.js"></script>
+</head>
+<body>
+	<div id="vapp">
+		<header>
+			<!-- Fixed navbar -->
+			<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+				<a class="navbar-brand" href="#">Aplicación Básica (Gestión de textos)</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarCollapse" aria-controls="navbarCollapse"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarCollapse">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item active"><a class="nav-link" href="#">Home
+								<span class="sr-only">(current)</span>
+						</a></li>
+						<li class="nav-item"><a class="nav-link" href="#">Mis textos</a></li>
+						<li class="nav-item form-inline margin-l"><button class="btn btn-sm btn-outline-primary"><i class="fas fa-plus"></i> Nuevo Texto</button></li>
+					</ul>
+					<div class="form-inline mt-2 mt-md-0">
+						<div class="inline magin-r white-text"><i class="fas fa-user"></i> <span class="username">Usuario</span></div>
+						<button class="btn btn-sm btn-outline-primary my-2 my-sm-0" type="submit"><i class="fas fa-sign-out-alt"></i> Salir</button>
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<!-- Begin page content -->
+		<main role="main" class="container main-container">
+			<h1 class="mt-5">Sticky footer with fixed navbar</h1>
+			<p class="lead">
+				Pin a fixed-height footer to the bottom of the viewport in desktop
+				browsers with this custom HTML and CSS. A fixed navbar has been added
+				with
+				<code>padding-top: 60px;</code>
+				on the
+				<code>body &gt; .container</code>
+				.
+			</p>
+			<p>
+				Back to <a href="../sticky-footer">the default sticky footer</a>
+				minus the navbar.
+			</p>
+		</main>
+
+		<footer class="footer">
+			<div class="container">
+				<span class="text-muted">Agustín San Román Guzmán. Trabajo para Modelado Avanzado de Sistemas de Información, Máster en Ingeniería Informática. 2018-2019.</span>
+			</div>
+		</footer>
+	</div>
+</body>
 </html>
 

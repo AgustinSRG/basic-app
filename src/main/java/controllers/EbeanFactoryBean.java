@@ -3,11 +3,8 @@ package controllers;
 import io.ebean.EbeanServer;
 import io.ebean.EbeanServerFactory;
 import io.ebean.config.ServerConfig;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 //import io.ebean.springsupport.txn.SpringAwareJdbcTransactionManager;
 
 /**
