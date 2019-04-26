@@ -84,6 +84,9 @@ window.vue_loadModalComponents = function () {
             },
             hide: function () {
                 $("#" + this.id).modal("hide");
+                this.username = "";
+                this.password = "";
+                this.error = "";
             },
             login: function (event) {
             	this.error = "";
@@ -185,6 +188,10 @@ window.vue_loadModalComponents = function () {
             },
             hide: function () {
                 $("#" + this.id).modal("hide");
+                this.username = "";
+                this.password = "";
+                this.passwordRepeat = "";
+                this.error = "";
             },
             signup: function (event) {
             	if (event) {

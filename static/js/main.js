@@ -182,10 +182,12 @@ $(document).ready(function () {
         		
         		PendingRequests.pending("login", $.post("/login", {name: username, password: pw1, expiration: "no"}, function (response) {
 					if (response.success) {
+						this.$refs.loginModal.hide()
 						this.isUser = true;
             			this.userId = response.userId;
             			this.userName = response.userName;
             			this.sessionToken = response.token;
+            			setCookie("session", this.sessionToken);
 					} else {
 						switch (response.errorCode) {
 							case "USER_NOT_FOUND":
@@ -237,6 +239,7 @@ $(document).ready(function () {
                     			this.userId = response.userId;
                     			this.userName = response.userName;
                     			this.sessionToken = response.token;
+                    			setCookie("session", this.sessionToken);
         					}
         				}.bind(this)));
         			} else {
