@@ -84,7 +84,7 @@ public class CommentController extends GeneralController {
 		Comment comment = new Comment(id);
 		
 		comment.setUser(user.getID());
-		comment.setTextfile(f.getID());
+		comment.setTextFile(f.getID());
 		comment.setDate(new Date());
 		comment.setContent(text);
 		

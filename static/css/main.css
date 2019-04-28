@@ -76,3 +76,7 @@ code {
 	cursor: pointer;
 }
 
+.comment-list-row {
+	padding: 0.3rem 0.5rem;
+}
+

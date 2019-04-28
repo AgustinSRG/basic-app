@@ -24,7 +24,7 @@ public class Comment extends Model {
 	// References
 		private java.lang.String user;
 
-		private java.lang.String textfile;
+		private java.lang.String textFile;
  
 		/**
 		 * Gets the attribute identifier
@@ -106,15 +106,15 @@ public class Comment extends Model {
 		/**
 		 * Gets the reference textfile
 		 */
-		public java.lang.String getTextfile() {
-			return this.textfile;
+		public java.lang.String getTextFile() {
+			return this.textFile;
 		}
 
 		/**
 		 * Sets the reference textfile
 		 */
-		public void setTextfile(java.lang.String value) {
-			this.textfile = value;
+		public void setTextFile(java.lang.String value) {
+			this.textFile = value;
 		}
 }
 

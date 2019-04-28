@@ -24,10 +24,35 @@ window.vue_loadFileView = function () {
             	this.$emit("post");
             },
             reloadComments: function () {
-            	
+            	this.$refs.commentSection.file = this.file;
+            	this.$refs.commentSection.reload();
             },
             change: function () {
             	this.saved = false;
+            },
+            postComment: function () {
+            	var message = this.$refs.commentSection.message;
+            	if (!message) {
+            		this.$refs.commentSection.error = "No puede dejar un comentario vacío.";
+            		return;
+            	}
+            	if (message.length > 300) {
+            		this.$refs.commentSection.error = "Su comentario no puede superar los 300 caracteres.";
+            		return;
+            	}
+            	
+            	PendingRequests.pending("post-comment", $.post("/comments/post", {file: this.file, content: message}, function (response) {
+            		if (response.success) {
+            			this.$refs.commentSection.message = "";
+            			this.$refs.commentSection.elements.unshift(response);
+            		} else {
+            			this.$refs.commentSection.error = "No se pudo publicar su comentario debido a un error inesperado.";
+            			return;
+            		}
+            	}.bind(this)).fail(function () {
+            		this.$refs.commentSection.error = "No se pudo publicar su comentario debido a un error inesperado.";
+            		return;
+            	}.bind(this)));
             },
         },
         template: '<div v-bind:class="{\'d-none\': !display}">'
@@ -46,7 +71,7 @@ window.vue_loadFileView = function () {
         	+ '<button v-bind:disabled="saved" v-if="canEdit" type="submit" class="btn btn-primary">Guardar Cambios</button>'
         	+ '</form>'
         	+ '<hr>'
-        	+ '<comments-section ref="commentSection"></comments-section>'
+        	+ '<comments-section ref="commentSection" v-on:post="postComment"></comments-section>'
         	+ '</div>'
     });
 };

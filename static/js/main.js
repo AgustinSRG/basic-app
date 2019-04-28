@@ -269,6 +269,7 @@ $(document).ready(function () {
             			this.userName = response.userName;
             			this.sessionToken = response.token;
             			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
+            			this.$refs.fileSection.$refs.commentSection.canComment = true;
             			setCookie("session", this.sessionToken);
 					} else {
 						switch (response.errorCode) {
@@ -322,6 +323,7 @@ $(document).ready(function () {
                     			this.userName = response.userName;
                     			this.sessionToken = response.token;
                     			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
+                    			this.$refs.fileSection.$refs.commentSection.canComment = true;
                     			setCookie("session", this.sessionToken);
         					}
         				}.bind(this)));
@@ -343,6 +345,7 @@ $(document).ready(function () {
     			this.userId = "";
     			this.userName = "";
     			this.sessionToken = "";
+    			this.$refs.fileSection.$refs.commentSection.canComment = false;
     			this.goHome();
     			if (token) {
     				PendingRequests.pending("logout", $.post("/logout", {token: token}, function () {
@@ -383,16 +386,19 @@ $(document).ready(function () {
                 			this.userId = response.userId;
                 			this.userName = response.userName;
                 			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
+                			this.$refs.fileSection.$refs.commentSection.canComment = true;
         				} else {
         					this.isUser = false;
                 			this.userId = "";
                 			this.userName = "";
+                			this.$refs.fileSection.$refs.commentSection.canComment = false;
         				}
         			}.bind(this)));
         		} else {
         			this.isUser = false;
         			this.userId = "";
         			this.userName = "";
+        			this.$refs.fileSection.$refs.commentSection.canComment = false;
         		}
         	},
         	init: function () {
