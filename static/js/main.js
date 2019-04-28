@@ -172,19 +172,77 @@ $(document).ready(function () {
         },
         methods: {
         	goHome: function () {
+        		if (this.section === "file" && !this.$refs.fileSection.saved) {
+        			if (!confirm("Sus cambios se perderán, ¿esta seguro?")) {
+        				return;
+        			}
+        		}
         		this.section = "home";
         		this.$refs.fileListSection.reload("/files/public");
         	},
         	goMyTextFiles: function () {
+        		if (this.section === "file" && !this.$refs.fileSection.saved) {
+        			if (!confirm("Sus cambios se perderán, ¿esta seguro?")) {
+        				return;
+        			}
+        		}
         		this.section = "my-files";
         		this.$refs.fileListSection.reload("/files/own");
         	},
         	goCreateTextFile: function () {
+        		if (this.section === "file" && !this.$refs.fileSection.saved) {
+        			if (!confirm("Sus cambios se perderán, ¿esta seguro?")) {
+        				return;
+        			}
+        		}
         		this.section = "create";
         	},
         	goTextFile: function (file) {
-        		this.section = "file";
-        		this.selectedFile = file;
+        		if (this.section === "file" && !this.$refs.fileSection.saved) {
+        			if (!confirm("Sus cambios se perderán, ¿esta seguro?")) {
+        				return;
+        			}
+        		}
+        		PendingRequests.pending("load-file", $.get("/files/get", {id: file}, function (response) {
+        			if (!response.success) {
+        				console.log(JSON.stringify(response));
+        				return;
+        			}
+        			this.section = "file";
+        			this.selectedFile = file;
+        			this.$refs.fileSection.saved = true;
+        			this.$refs.fileSection.file = response.id;
+        			this.$refs.fileSection.title = response.title;
+        			this.$refs.fileSection.content = response.content;
+        			this.$refs.fileSection.userId = response.userId;
+        			this.$refs.fileSection.canEdit = response.userId === this.userId;
+        			this.$refs.fileSection.reloadComments();
+        		}.bind(this)));
+        		
+        	},
+        	editFile: function () {
+        		var title = this.$refs.fileSection.title;
+        		var content = this.$refs.fileSection.content;
+        		if (!title) {
+        			this.$refs.fileSection.error = "Debes especificar un título para el texto.";
+        			return;
+        		}
+        		if (title.length > 160) {
+        			this.$refs.fileSection.error = "El título no debe ser mayor de 160 caracteres.";
+        			return;
+        		}
+        		
+        		PendingRequests.pending("edit-file", $.post("/files/edit", {id: this.selectedFile, title: title, content: content}, function (response) {
+        			if (response.success) {
+        				this.$refs.fileSection.saved = true;
+        			} else {
+        				this.$refs.fileCreateSection.error = "No se pudo editar el texto debido a un error inesperado. Compruebe que dispone de conexión a Internet.";
+            			return;
+        			}
+        		}.bind(this)).fail(function () {
+        			this.$refs.fileCreateSection.error = "No se pudo editar el texto debido a un error inesperado. Compruebe que dispone de conexión a Internet.";
+        			return;
+        		}.bind(this)));
         	},
         	showLogin: function () {
         		this.$refs.loginModal.show();
@@ -210,6 +268,7 @@ $(document).ready(function () {
             			this.userId = response.userId;
             			this.userName = response.userName;
             			this.sessionToken = response.token;
+            			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
             			setCookie("session", this.sessionToken);
 					} else {
 						switch (response.errorCode) {
@@ -262,6 +321,7 @@ $(document).ready(function () {
                     			this.userId = response.userId;
                     			this.userName = response.userName;
                     			this.sessionToken = response.token;
+                    			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
                     			setCookie("session", this.sessionToken);
         					}
         				}.bind(this)));
@@ -305,6 +365,7 @@ $(document).ready(function () {
         		PendingRequests.pending("create-file", $.post("/files/create", {title: title, content: content}, function (response) {
         			if (response.success) {
         				this.goTextFile(response.id);
+        				this.$refs.fileCreateSection.clear();
         			} else {
         				this.$refs.fileCreateSection.error = "No se pudo crear el texto debido a un error inesperado. Compruebe que dispone de conexión a Internet.";
             			return;
@@ -321,6 +382,7 @@ $(document).ready(function () {
         					this.isUser = true;
                 			this.userId = response.userId;
                 			this.userName = response.userName;
+                			this.$refs.fileSection.canEdit = this.$refs.fileSection.userId === this.userId;
         				} else {
         					this.isUser = false;
                 			this.userId = "";

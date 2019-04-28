@@ -64,7 +64,7 @@
 				<div class="col-md-12 border" style="padding: 1rem;">
 					<file-create-section ref="fileCreateSection" v-bind:display="section === 'create'" v-on:post="postNewFile"></file-create-section>
 					<file-list-section ref="fileListSection" v-bind:display="section === 'home' || section === 'my-files'"></file-list-section>
-					<file-section ref="fileSection" v-bind:display="section === 'file'"></file-section>
+					<file-section ref="fileSection" v-bind:display="section === 'file'" v-on:post="editFile"></file-section>
 				</div>
 			</div>
 		</main>
