@@ -100,6 +100,7 @@ window.vue_loadModalComponents = function () {
             },
         },
         template: '<div class="modal fade" v-bind:id="id" tabindex="-1" role="dialog" aria-hidden="true">'
+        	+ '<form v-on:submit="login($event)">'
         + '<div class="modal-dialog" role="document">'
         + '<div class="modal-content">'
         + '<div class="modal-header">'
@@ -109,7 +110,6 @@ window.vue_loadModalComponents = function () {
         + '</button>'
         + '</div>'
         + '<div class="modal-body">'
-        + '<form v-on:submit="login($event)">'
         + ''
         + '<div class="form-group">'
         + '<label>Nombre de usuario</label>'
@@ -121,14 +121,14 @@ window.vue_loadModalComponents = function () {
         + '</div>'
         + ''
         + '<small class="error-modal" v-text="error"></small>'
-        + '</form>'
         + '</div>'
         + '<div class="modal-footer">'
-        + '<button type="button" class="btn btn-primary" v-on:click="login">' + __("Iniciar Sesión") + '</button>'
+        + '<button type="submit" class="btn btn-primary">' + __("Iniciar Sesión") + '</button>'
         + '</div>'
         + '</div>'
         + '</div>'
-        + '</div>'
+        + '</form>'
+        + '</div>' 
     });
     
     Vue.component('logout-modal', {
@@ -204,6 +204,7 @@ window.vue_loadModalComponents = function () {
             },
         },
         template: '<div class="modal fade" v-bind:id="id" tabindex="-1" role="dialog" aria-hidden="true">'
+        	+ '<form v-on:submit="signup($event)">'
             + '<div class="modal-dialog" role="document">'
             + '<div class="modal-content">'
             + '<div class="modal-header">'
@@ -213,7 +214,6 @@ window.vue_loadModalComponents = function () {
             + '</button>'
             + '</div>'
             + '<div class="modal-body">'
-            + '<form v-on:submit="signup($event)">'
             + ''
             + '<div class="form-group">'
             + '<label>Nombre de usuario</label>'
@@ -224,18 +224,18 @@ window.vue_loadModalComponents = function () {
             + '<input v-model="password" type="password" name="password" class="form-control" placeholder="Contraseña">'
             + '</div>'
             + '<div class="form-group">'
-            + '<label>Repista su contraseña</label>'
+            + '<label>Repita su contraseña</label>'
             + '<input v-model="passwordRepeat" type="password" name="password" class="form-control" placeholder="Contraseña">'
             + '</div>'
             + ''
             + '<small class="error-modal" v-text="error"></small>'
-            + '</form>'
             + '</div>'
             + '<div class="modal-footer">'
-            + '<button type="button" class="btn btn-primary" v-on:click="signup">' + __("Registrarse") + '</button>'
+            + '<button type="submit" class="btn btn-primary">' + __("Registrarse") + '</button>'
             + '</div>'
             + '</div>'
             + '</div>'
+            + '</form>'
             + '</div>'
     });
 };

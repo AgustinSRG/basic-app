@@ -8,6 +8,23 @@ window.escapeHTML = function escapeHTML(html) {
         .replace(/'/g, "&apos;");
 }
 
+window.isElementInViewport = function isElementInViewport (el) {
+
+    //special bonus for those using jQuery
+    if (typeof jQuery === "function" && el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+    );
+}
+
 // Cookies
 
 window.getCookie = function getCookie(name) {
@@ -136,6 +153,10 @@ $(document).ready(function () {
     
 	// Register components
 	vue_loadModalComponents();
+	vue_loadFileCreationView();
+	vue_loadCommentsComponents();
+	vue_loadFileView();
+	vue_loadFileListView();
 	
 	// VUE main app
 	
@@ -152,9 +173,11 @@ $(document).ready(function () {
         methods: {
         	goHome: function () {
         		this.section = "home";
+        		this.$refs.fileListSection.reload("/files/public");
         	},
         	goMyTextFiles: function () {
         		this.section = "my-files";
+        		this.$refs.fileListSection.reload("/files/own");
         	},
         	goCreateTextFile: function () {
         		this.section = "create";
@@ -267,6 +290,30 @@ $(document).ready(function () {
     				}));
     			}
         	},
+        	postNewFile: function () {
+        		var title = this.$refs.fileCreateSection.title;
+        		var content = this.$refs.fileCreateSection.content;
+        		if (!title) {
+        			this.$refs.fileCreateSection.error = "Debes especificar un título para el texto.";
+        			return;
+        		}
+        		if (title.length > 160) {
+        			this.$refs.fileCreateSection.error = "El título no debe ser mayor de 160 caracteres.";
+        			return;
+        		}
+        		
+        		PendingRequests.pending("create-file", $.post("/files/create", {title: title, content: content}, function (response) {
+        			if (response.success) {
+        				this.goTextFile(response.id);
+        			} else {
+        				this.$refs.fileCreateSection.error = "No se pudo crear el texto debido a un error inesperado. Compruebe que dispone de conexión a Internet.";
+            			return;
+        			}
+        		}.bind(this)).fail(function () {
+        			this.$refs.fileCreateSection.error = "No se pudo crear el texto debido a un error inesperado. Compruebe que dispone de conexión a Internet.";
+        			return;
+        		}.bind(this)));
+        	},
         	checkSession: function () {
         		if (this.sessionToken) {
         			PendingRequests.pending("session-check", $.get("/session", function (response) {
@@ -295,4 +342,6 @@ $(document).ready(function () {
 	});
 	
 	App.init();
+	App.$refs.fileListSection.init();
+	App.goHome();
 });

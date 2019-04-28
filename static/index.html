@@ -24,6 +24,10 @@
 <script type="text/javascript" src="/js/lib/vue.js"></script>
 
 <!-- Scripts (App) -->
+<script type="text/javascript" src="/js/list.js"></script>
+<script type="text/javascript" src="/js/file-create.js"></script>
+<script type="text/javascript" src="/js/file-view.js"></script>
+<script type="text/javascript" src="/js/comments.js"></script>
 <script type="text/javascript" src="/js/modals.js"></script>
 <script type="text/javascript" src="/js/main.js"></script>
 </head>
@@ -41,7 +45,7 @@
 				<div class="collapse navbar-collapse" id="navbarCollapse">
 					<ul class="navbar-nav mr-auto">
 						<li v-bind:class="{active: section === 'home'}" class="nav-item"><a class="nav-link" href="javascript:;" v-on:click="goHome">Inicio</a></li>
-						<li v-bind:class="{'d-none': !isUser}" class="nav-item"><a class="nav-link" href="javascript:;" v-on:click="goMyTextFiles">Mis textos</a></li>
+						<li v-bind:class="{'d-none': !isUser, active: section === 'my-files'}" class="nav-item"><a class="nav-link" href="javascript:;" v-on:click="goMyTextFiles">Mis textos</a></li>
 						<li v-bind:class="{'d-none': !isUser}" class="nav-item form-inline margin-l"><button class="btn btn-sm btn-outline-primary" v-on:click="goCreateTextFile"><i class="fas fa-plus"></i> Nuevo Texto</button></li>
 					</ul>
 					<div class="form-inline mt-2 mt-md-0">
@@ -56,7 +60,13 @@
 
 		<!-- Begin page content -->
 		<main role="main" class="container main-container">
-			TODO
+			<div class="row" style="justify-content: center; padding-top: 1rem;">
+				<div class="col-md-12 border" style="padding: 1rem;">
+					<file-create-section ref="fileCreateSection" v-bind:display="section === 'create'" v-on:post="postNewFile"></file-create-section>
+					<file-list-section ref="fileListSection" v-bind:display="section === 'home' || section === 'my-files'"></file-list-section>
+					<file-section ref="fileSection" v-bind:display="section === 'file'"></file-section>
+				</div>
+			</div>
 		</main>
 
 		<footer class="footer">

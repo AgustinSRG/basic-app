@@ -51,7 +51,8 @@ code {
 }
 
 .main-container {
-	padding-top: 1rem;
+	padding-top: 3rem;
+	padding-bottom: 1rem;
 }
 
 .error-modal {
@@ -61,5 +62,17 @@ code {
 
 .error-label {
 	color:red;
+}
+
+.file-list-row {
+	padding: 0.3rem 0.5rem;
+}
+
+#list-load-marker {
+	height: 0;
+}
+
+.file-list-card {
+	cursor: pointer;
 }
 
